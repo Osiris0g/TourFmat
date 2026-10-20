@@ -1,7 +1,7 @@
 // Cada zona: id, nombre, descripción, pts (coordenadas sobre la foto) y scene (la foto 360° que se asignará después).
 const ZONES = [
- {id:"edifA", name:"Edificio A (Administrativo)", pts:"336,500 369,389 470,395 442,502"},
- {id:"edifB", name:"Edificio B (Centro de Cómputo)", desc:"Aquí se encuentra el Centro de Cómputo.", pts:"613,513 797,511 767,401 615,394"},
+ {id:"edifA", name:"Edificio A (Administrativo)", pts:"336,500 369,389 470,395 442,502 430,503 431,532 336,528 334,497"},
+ {id:"edifB", name:"Edificio B (Centro de Cómputo)", desc:"Aquí se encuentra el Centro de Cómputo.", pts:"613,513 614,510 615,394 767,401 797,511 773,513 768,542 613,531"},
  {id:"patio", name:"El Cheto de FMAT", pts:"607,439 602,454 587,466 564,474 537,477 510,474 488,466 472,454 467,439 472,424 488,412 510,404 537,401 564,404 587,412 602,424"},
  {id:"acceso", name:"Plaza de acceso", pts:"475,536 610,547 640,592 470,592"},
  {id:"plaza", name:"Plaza central", pts:"503,312 579,312 580,337 582,390 503,388"},
@@ -13,7 +13,7 @@ const ZONES = [
  {id:"edifG", name:"Edificio G (Laboratorios)", pts:"400,158 390,178 268,170 279,156"},
  {id:"edifH", name:"Edificio H", pts:"617,205 752,208 750,225 618,227"},
  {id:"canchas", name:"Canchas FMAT", pts:"528,120 619,121 618,99 531,99"},
- {id:"biblio", name:"Biblioteca de Ciencias Exactas", pts:"841,277 1070,271 1131,370 900,370"},
+ {id:"biblio", name:"Biblioteca de Ciencias Exactas", pts:"889,408 825,317 843,278 1070,271 1132,369 1133,414 895,412 902,371 902,369"},
  {id:"estac", name:"Estacionamiento", pts:"0,508 105,508 125,540 205,572 250,590 255,632 380,652 560,648 650,665 780,660 960,672 960,698 0,698"}
 ].map(z=>({desc:"Aquí irá la descripción de este espacio y el acceso a su foto 360°.",scene:null,...z}));
 
@@ -21,7 +21,7 @@ const NS="http://www.w3.org/2000/svg", $=id=>document.getElementById(id);
 const svg=$("svg"), mapEl=$("map"), list=$("list"), go=$("go");
 const pan=$("pan"), reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches, canPan=matchMedia("(hover: hover) and (pointer: fine)").matches;
 const callout=$("zoneCallout"), calloutLine=$("calloutLine"), calloutDot=$("calloutDot"), calloutLines=$("calloutLines");
-let current=null, currentCalloutId=null, tx=0, ty=0, cx=0, cy=0, zoom=1.035;
+let current=null, currentCalloutId=null, tx=0, ty=0, cx=0, cy=0, zoom=1, mapHovered=false;
 
 ZONES.forEach(z=>{
   const p=document.createElementNS(NS,"polygon");
@@ -167,12 +167,13 @@ function updateCallout(){
 }
 function aim(e){
   if(reducedMotion||!canPan||e.pointerType==="touch"||document.body.classList.contains("editing"))return;
+  mapHovered=true;
   const rect=mapEl.getBoundingClientRect();
   tx=((e.clientX-rect.left)/rect.width-.5)*2;
   ty=((e.clientY-rect.top)/rect.height-.5)*2;
 }
 mapEl.addEventListener("pointermove",aim);
-mapEl.addEventListener("pointerleave",()=>{tx=0;ty=0;});
+mapEl.addEventListener("pointerleave",()=>{tx=0;ty=0;mapHovered=false;});
 mapEl.addEventListener("click",e=>{
   if(document.body.classList.contains("editing")||e.target.closest(".zone"))return;
   select(null);
@@ -181,7 +182,7 @@ window.addEventListener("resize",()=>{if(currentCalloutId)updateCallout();});
 (function animateMap(){
   const editing=document.body.classList.contains("editing");
   const targetX=editing||reducedMotion?0:tx, targetY=editing||reducedMotion?0:ty;
-  const targetZoom=editing||reducedMotion||!canPan?1:1.035;
+  const targetZoom=editing||reducedMotion||!canPan||!mapHovered?1:1.015;
   cx+=(targetX-cx)*.06; cy+=(targetY-cy)*.06; zoom+=(targetZoom-zoom)*.06;
   const width=mapEl.clientWidth, height=mapEl.clientHeight;
   pan.style.transform="translate("+(-cx*(zoom-1)*width/2)+"px,"+(-cy*(zoom-1)*height/2)+"px) scale("+zoom+")";
