@@ -42,7 +42,10 @@ aside p{margin:0 0 14px;color:var(--muted)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
 .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.list{margin:16px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.zone-picker{margin-top:14px}
+.zone-picker summary{width:fit-content;color:var(--ink);font-weight:600;cursor:pointer}
+.zone-picker summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:3px}
+.list{max-height:32vh;margin:10px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;overflow-y:auto}
 .list button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:transparent;color:var(--ink);padding:4px 10px;border-radius:99px;cursor:pointer}
 .list button:hover,.list button.on{border-color:var(--accent);background:var(--accent-fill)}
 .tools{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
