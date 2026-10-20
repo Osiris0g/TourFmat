@@ -4,8 +4,8 @@
 
 <table>
   <tr>
-    <td width="50%"><img src="assets/portada.png" alt="Portada del recorrido" /></td>
-    <td width="50%"><img src="assets/mapa.png" alt="Mapa interactivo con zonas" /></td>
+    <td width="50%"><img src="assets/cover.jpg" alt="Portada del recorrido" /></td>
+    <td width="50%"><img src="assets/map.jpg" alt="Mapa interactivo con zonas" /></td>
   </tr>
   <tr>
     <td align="center"><sub>Portada</sub></td>
