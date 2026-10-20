@@ -18,9 +18,10 @@ const ZONES = [
 ].map(z=>({desc:"Aquí irá la descripción de este espacio y el acceso a su foto 360°.",scene:null,...z}));
 
 const NS="http://www.w3.org/2000/svg", $=id=>document.getElementById(id);
-const svg=$("svg"), list=$("list"), go=$("go");
+const svg=$("svg"), mapEl=$("map"), list=$("list"), go=$("go");
+const pan=$("pan"), reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches, canPan=matchMedia("(hover: hover) and (pointer: fine)").matches;
 const callout=$("zoneCallout"), calloutLine=$("calloutLine"), calloutDot=$("calloutDot"), calloutLines=$("calloutLines");
-let current=null, currentCalloutId=null;
+let current=null, currentCalloutId=null, tx=0, ty=0, cx=0, cy=0, zoom=1.035;
 
 ZONES.forEach(z=>{
   const p=document.createElementNS(NS,"polygon");
@@ -43,6 +44,7 @@ function showCallout(zone){
   $("calloutDesc").textContent=zone.desc;
   callout.hidden=false;
   callout.classList.add("visible");
+  requestAnimationFrame(updateCallout);
 }
 function hideCallout(){
   currentCalloutId=null;
@@ -128,9 +130,6 @@ function addItem(label,fn){ const b=document.createElement("button"); b.textCont
 addItem("Portada",()=>cover.classList.remove("hide"));
 ZONES.forEach(z=>addItem(z.name,()=>{ start(); select(z.id); }));
 
-// Efecto de desplazamiento con el cursor (la foto se acerca y se mueve como un recorrido)
-const mapEl=$("map"), pan=$("pan"), ZOOM=1.3, still=matchMedia("(prefers-reduced-motion: reduce)").matches;
-let tx=0, ty=0, cx=0, cy=0, cz=ZOOM;
 function polygonCentroid(zone){
   const points=zone.pts.split(/\s+/).map(pair=>pair.split(",").map(Number));
   let area=0, x=0, y=0;
@@ -166,18 +165,26 @@ function updateCallout(){
   calloutLine.setAttribute("x2",localEndpoint.x); calloutLine.setAttribute("y2",localEndpoint.y);
   calloutDot.setAttribute("cx",center[0]); calloutDot.setAttribute("cy",center[1]);
 }
-function aim(e){ if(still) return; const r=mapEl.getBoundingClientRect(); tx=((e.clientX-r.left)/r.width-.5)*2; ty=((e.clientY-r.top)/r.height-.5)*2; }
+function aim(e){
+  if(reducedMotion||!canPan||e.pointerType==="touch"||document.body.classList.contains("editing"))return;
+  const rect=mapEl.getBoundingClientRect();
+  tx=((e.clientX-rect.left)/rect.width-.5)*2;
+  ty=((e.clientY-rect.top)/rect.height-.5)*2;
+}
 mapEl.addEventListener("pointermove",aim);
+mapEl.addEventListener("pointerleave",()=>{tx=0;ty=0;});
 mapEl.addEventListener("click",e=>{
   if(document.body.classList.contains("editing")||e.target.closest(".zone"))return;
   select(null);
 });
-mapEl.addEventListener("pointerleave",()=>{ tx=0; ty=0; });
-(function loop(){
-  const ed=document.body.classList.contains("editing");
-  cx+=((ed?0:tx)-cx)*.08; cy+=((ed?0:ty)-cy)*.08; cz+=((ed?1:ZOOM)-cz)*.08;
-  const w=mapEl.clientWidth, h=mapEl.clientHeight;
-  pan.style.transform="translate("+(-cx*(cz-1)*w/2)+"px,"+(-cy*(cz-1)*h/2)+"px) scale("+cz+")";
-  updateCallout();
-  requestAnimationFrame(loop);
+window.addEventListener("resize",()=>{if(currentCalloutId)updateCallout();});
+(function animateMap(){
+  const editing=document.body.classList.contains("editing");
+  const targetX=editing||reducedMotion?0:tx, targetY=editing||reducedMotion?0:ty;
+  const targetZoom=editing||reducedMotion||!canPan?1:1.035;
+  cx+=(targetX-cx)*.06; cy+=(targetY-cy)*.06; zoom+=(targetZoom-zoom)*.06;
+  const width=mapEl.clientWidth, height=mapEl.clientHeight;
+  pan.style.transform="translate("+(-cx*(zoom-1)*width/2)+"px,"+(-cy*(zoom-1)*height/2)+"px) scale("+zoom+")";
+  if(currentCalloutId)updateCallout();
+  requestAnimationFrame(animateMap);
 })();
