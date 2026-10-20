@@ -10,6 +10,7 @@ const ZONES = [
  {id:"edifC", name:"Edificio C", pts:"448,239 579,241 581,279 434,279"},
  {id:"edifD", name:"Edificio D", pts:"618,240 770,242 774,288 618,284"},
  {id:"edifE", name:"Edificio E", pts:"390,352 412,287 495,283 480,380 395,386"},
+ {id:"ingQuimica", name:"Facultad de Ingeniería Química (próximamente)", desc:"La Facultad de Ingeniería Química se agregará próximamente.", pts:"258,362 3,343 133,201 366,212", upcoming:true},
  {id:"edifG", name:"Edificio G (Laboratorios)", pts:"400,158 390,178 268,170 279,156"},
  {id:"edifH", name:"Edificio H", pts:"617,205 752,208 750,225 618,227"},
  {id:"canchas", name:"Canchas FMAT", pts:"528,120 619,121 618,99 531,99"},
@@ -26,6 +27,7 @@ let current=null, currentCalloutId=null, tx=0, ty=0, cx=0, cy=0, zoom=1, mapHove
 ZONES.forEach(z=>{
   const p=document.createElementNS(NS,"polygon");
   p.setAttribute("points",z.pts); p.setAttribute("class","zone"); p.setAttribute("tabindex","0");
+  if(z.upcoming)p.classList.add("upcoming");
   p.setAttribute("role","button"); p.setAttribute("aria-label",z.name); p.id="z-"+z.id;
   p.addEventListener("pointerenter",()=>showCallout(z));
   p.addEventListener("pointerleave",hideCallout);
@@ -35,7 +37,7 @@ ZONES.forEach(z=>{
   p.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(current?.id===z.id?null:z.id)}});
   $("zones").appendChild(p);
   const li=document.createElement("li"), b=document.createElement("button");
-  b.textContent=z.name; b.id="b-"+z.id; b.onclick=()=>select(z.id); li.appendChild(b); list.appendChild(li);
+  b.textContent=z.name; b.id="b-"+z.id; if(z.upcoming)b.classList.add("upcoming"); b.onclick=()=>select(z.id); li.appendChild(b); list.appendChild(li);
 });
 
 function showCallout(zone){
