@@ -24,6 +24,8 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;padding:12p
 .zone{fill:transparent;stroke:var(--zone-line);stroke-width:2;stroke-dasharray:7 4;filter:drop-shadow(0 0 1.5px #14213d);cursor:pointer;transition:fill .15s,stroke .15s,stroke-width .15s}
 .zone:hover,.zone:focus-visible,.zone.on{fill:var(--accent-fill);stroke:var(--accent);stroke-width:3;stroke-dasharray:none;outline:none}
 .zone.on{fill:rgba(233,168,0,.55)}
+.zone.upcoming{fill:rgba(168,85,247,.18);stroke:#a855f7}
+.zone.upcoming:hover,.zone.upcoming:focus-visible,.zone.upcoming.on{fill:rgba(168,85,247,.42);stroke:#9333ea;stroke-width:3;stroke-dasharray:none}
 body.editing .zone{pointer-events:none;opacity:.5}
 body.editing .map svg{cursor:crosshair}
 .callout-lines{pointer-events:none}
@@ -48,6 +50,8 @@ aside p{margin:0 0 14px;color:var(--muted)}
 .list{max-height:32vh;margin:10px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;overflow-y:auto}
 .list button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:transparent;color:var(--ink);padding:4px 10px;border-radius:99px;cursor:pointer}
 .list button:hover,.list button.on{border-color:var(--accent);background:var(--accent-fill)}
+.list button.upcoming{border-color:#a855f7}
+.list button.upcoming:hover,.list button.upcoming.on{border-color:#9333ea;background:rgba(168,85,247,.18)}
 .tools{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
 .tools label{display:flex;gap:8px;align-items:center;font-size:.9rem;cursor:pointer}
 #edit{display:none;margin-top:10px}
