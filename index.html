@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Recorrido virtual FMAT</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
 </head>
@@ -68,6 +69,16 @@
     </div>
   </aside>
 </main>
+<div class="viewer-modal" id="viewerModal" role="dialog" aria-modal="true" aria-labelledby="viewerTitle" hidden>
+  <div class="viewer-panel">
+    <div class="viewer-header">
+      <h2 id="viewerTitle">Recorrido 360°</h2>
+      <button class="viewer-close" id="viewerClose" type="button" aria-label="Cerrar visor 360°">&times;</button>
+    </div>
+    <div id="panorama" aria-label="Vista panorámica 360 grados"></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js" defer></script>
 <script src="script.js" defer></script>
 </body>
 </html>
