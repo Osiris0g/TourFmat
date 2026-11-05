@@ -1,11 +1,11 @@
-// Cada zona: id, nombre, descripción, pts (coordenadas sobre la foto) y scene (la foto 360° que se asignará después).
+// Cada zona: id, nombre, descripción, pts (coordenadas sobre la foto) y scene (ruta de la foto 360°).
 const ZONES = [
- {id:"edifA", name:"Edificio A (Administrativo)", pts:"336,500 369,389 470,395 442,502 430,503 431,532 336,528 334,497"},
+ {id:"edifA", name:"Edificio A (Administrativo)", scene:"assets/360/edificio-a.jpg", pts:"336,500 369,389 470,395 442,502 430,503 431,532 336,528 334,497"},
  {id:"edifB", name:"Edificio B (Centro de Cómputo)", desc:"Aquí se encuentra el Centro de Cómputo.", pts:"613,513 614,510 615,394 767,401 797,511 773,513 768,542 613,531"},
  {id:"patio", name:"El Cheto de FMAT", pts:"607,439 602,454 587,466 564,474 537,477 510,474 488,466 472,454 467,439 472,424 488,412 510,404 537,401 564,404 587,412 602,424"},
  {id:"acceso", name:"Plaza de acceso", pts:"636,593 636,595 594,563 482,560 477,589"},
  {id:"plaza", name:"Plaza central", pts:"503,312 579,312 580,337 582,390 503,388"},
- {id:"cafe", name:"Plaza Roja", pts:"580,337 610,336 640,342 654,354 658,368 650,382 636,391 610,390 582,390"},
+ {id:"cafe", name:"Plaza Roja", scene:"assets/360/plaza-roja.jpeg", pts:"580,337 610,336 640,342 654,354 658,368 650,382 636,391 610,390"},
  {id:"teatro", name:"Mini teatro al aire libre", pts:"747,365 742,328 688,332 692,366"},
  {id:"edifC", name:"Edificio C", pts:"448,239 579,241 581,279 434,279"},
  {id:"edifD", name:"Edificio D", pts:"618,240 770,242 774,288 618,284"},
@@ -20,6 +20,7 @@ const ZONES = [
 
 const NS="http://www.w3.org/2000/svg", $=id=>document.getElementById(id);
 const svg=$("svg"), mapEl=$("map"), list=$("list"), go=$("go");
+const viewerModal=$("viewerModal"), viewerClose=$("viewerClose");
 const pan=$("pan"), reducedMotion=matchMedia("(prefers-reduced-motion: reduce)").matches, canPan=matchMedia("(hover: hover) and (pointer: fine)").matches;
 const callout=$("zoneCallout"), calloutLine=$("calloutLine"), calloutDot=$("calloutDot"), calloutLines=$("calloutLines");
 let current=null, currentCalloutId=null, tx=0, ty=0, cx=0, cy=0, zoom=1, mapHovered=false;
@@ -71,7 +72,31 @@ function select(id){
   $("title").textContent=current.name; $("desc").textContent=current.desc;
   go.disabled=!current.scene;
 }
-go.onclick=()=>{ if(current&&current.scene){ /* aquí se abrirá el visor 360° */ } };
+let viewer=null;
+go.onclick=()=>{
+  if(!current?.scene)return;
+  $("viewerTitle").textContent=current.name+" · Vista 360°";
+  viewerModal.hidden=false;
+  document.body.classList.add("viewer-open");
+  viewer=pannellum.viewer("panorama",{
+    type:"equirectangular",
+    panorama:current.scene,
+    autoLoad:true,
+    showControls:true
+  });
+  viewerClose.focus();
+};
+function closeViewer(){
+  if(viewer){viewer.destroy();viewer=null;}
+  viewerModal.hidden=true;
+  document.body.classList.remove("viewer-open");
+  go.focus();
+}
+viewerClose.onclick=closeViewer;
+viewerModal.addEventListener("click",e=>{if(e.target===viewerModal)closeViewer()});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&!viewerModal.hidden)closeViewer();
+});
 
 // Modo trazo
 let pts=[];
