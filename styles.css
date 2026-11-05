@@ -59,6 +59,15 @@ body.editing #edit{display:block}
 #edit textarea{width:100%;height:84px;font:12px/1.4 ui-monospace,Menlo,monospace;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px}
 #edit .row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .copy-status{min-height:1.5em;margin:6px 0 0;font-size:.85rem;color:var(--muted)}
+.viewer-modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.78)}
+.viewer-modal[hidden]{display:none}
+.viewer-panel{width:min(1100px,100%);background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.viewer-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
+.viewer-header h2{margin:0;font-size:1.1rem}
+.viewer-close{border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.8rem;line-height:1;cursor:pointer;padding:2px 6px}
+.viewer-close:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#panorama{height:min(70vh,620px);min-height:320px;background:#111}
+body.viewer-open{overflow:hidden}
 
 header{padding-right:120px}
 .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
